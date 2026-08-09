@@ -1,0 +1,21 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.secrets.baseline
+.secrets.baseline
+
+.gemini/
+.worktrees/
+gha-creds-*.json
+
+# Local agent tooling (regenerated on demand)
+.codegraph/
+.omo/
+
+# Supabase CLI auto-generated metadata
+supabase/.temp/

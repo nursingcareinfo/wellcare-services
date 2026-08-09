@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HMSP Patient Intake</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        background: #000;
+        color: #e2e8f0;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+      .bg-glow {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          800px circle at 50% -20%,
+          rgba(52, 211, 153, 0.06),
+          transparent 60%
+        );
+      }
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 24px 16px;
+        position: relative;
+      }
+
+      /* Brand */
+      .brand {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+      .brand h1 {
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: #fff;
+      }
+      .brand h1 span {
+        color: #34d399;
+      }
+      .brand p {
+        font-size: 10px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-top: 6px;
+        font-weight: 700;
+      }
+
+      /* Cards */
+      .card {
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .card-title {
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #34d399;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title .num {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(52, 211, 153, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 900;
+        color: #34d399;
+      }
+
+      /* Form */
+      .field {
+        margin-bottom: 16px;
+      }
+      .field:last-child {
+        margin-bottom: 0;
+      }
+      label {
+        display: block;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 12px 14px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: inherit;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(52, 211, 153, 0.4);
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(148, 163, 184, 0.3);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+        cursor: pointer;
+      }
+
+      /* Row */
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      /* Agreement box */
+      .agreement-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-size: 13px;
+        line-height: 1.7;
+        color: #cbd5e1;
+      }
+      .agreement-box h3 {
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .agreement-box h4 {
+        font-size: 11px;
+        font-weight: 700;
+        color: #34d399;
+        margin-top: 16px;
+        margin-bottom: 6px;
+      }
+      .agreement-box p {
+        margin-bottom: 8px;
+        color: #94a3b8;
+      }
+
+      /* Equipment rows */
+      .equip-row {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+      .equip-row .row {
+        margin-bottom: 0;
+      }
+      .equip-row .field {
+        margin-bottom: 10px;
+      }
+      .equip-row .field:last-child {
+        margin-bottom: 0;
+      }
+      .equip-row label {
+        color: #64748b;
+      }
+      .remove-equip {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 6px 0;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+      }
+      .remove-equip:hover {
+        opacity: 1;
+      }
+      .add-equip {
+        background: rgba(52, 211, 153, 0.08);
+        border: 1px dashed rgba(52, 211, 153, 0.25);
+        border-radius: 10px;
+        padding: 12px;
+        width: 100%;
+        color: #34d399;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .add-equip:hover {
+        background: rgba(52, 211, 153, 0.12);
+        border-color: rgba(52, 211, 153, 0.4);
+      }
+
+      /* Submit */
+      .submit-btn {
+        width: 100%;
+        background: #34d399;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        color: #000;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 4px;
+      }
+      .submit-btn:hover {
+        background: #2dd48b;
+      }
+      .submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* Success */
+      .success {
+        display: none;
+        text-align: center;
+        padding: 60px 24px;
+      }
+      .success.show {
+        display: block;
+      }
+      .success .icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(52, 211, 153, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+      .success h2 {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .success p {
+        font-size: 13px;
+        color: #94a3b8;
+        max-width: 360px;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* Error */
+      .error-box {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        border-radius: 10px;
+        padding: 12px 14px;
+        color: #fca5a5;
+        font-size: 12px;
+        margin-bottom: 16px;
+        display: none;
+      }
+      .error-box.show {
+        display: block;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-top-color: #000;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        font-size: 9px;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 700;
+        margin-top: 32px;
+        padding-bottom: 40px;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+        .card {
+          padding: 18px;
+          border-radius: 12px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+        }
+        .brand h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-glow"></div>
+
+    <!-- Form -->
+    <div class="container" id="formContainer">
+      <div class="brand">
+        <h1>HMSP <span>HQ</span></h1>
+        <p>Patient Intake &amp; Service Agreement</p>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <!-- Section 1: Patient Details -->
+      <div class="card">
+        <div class="card-title"><span class="num">1</span> Patient Details</div>
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="fullName" placeholder="e.g. Muhammad Ali" required />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Father / Husband Name *</label>
+            <input type="text" id="guardianName" placeholder="Father or husband name" required />
+          </div>
+          <div class="field">
+            <label>Gender *</label>
+            <select id="gender" required>
+              <option value="">Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Marital Status</label>
+            <select id="maritalStatus">
+              <option value="">Select...</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input type="text" id="ageDisplay" placeholder="Auto-calculated" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>CNIC Number *</label>
+            <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required />
+          </div>
+          <div class="field">
+            <label>Date of Birth</label>
+            <input type="date" id="dob" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Mobile / WhatsApp *</label>
+            <input type="tel" id="mobile" placeholder="+92 XXX XXXXXXX" required />
+          </div>
+          <div class="field">
+            <label>District</label>
+            <input type="text" id="district" placeholder="e.g. Karachi Central" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Complete Address</label>
+          <textarea id="address" rows="2" placeholder="House / Street / Sector / City"></textarea>
+        </div>
+        <div class="field">
+          <label>Service Required *</label>
+          <select id="serviceType" required>
+            <option value="">Select service type...</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Babysitter">Babysitter</option>
+            <option value="Midwife">Midwife</option>
+            <option value="Attendant">Attendant</option>
+            <option value="Care Taker">Care Taker</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Section 2: Service Agreement -->
+      <div class="card">
+        <div class="card-title"><span class="num">2</span> Service Agreement &amp; Consent</div>
+
+        <div class="agreement-box">
+          <h3>HOME MEDICAL SERVICES PROVIDER (HMSP) — SERVICE AGREEMENT</h3>
+          <p>
+            This Service Agreement ("Agreement") is entered into between
+            <strong>Home Medical Services Provider (HMSP)</strong>, operating from Karachi, Pakistan
+            ("the Agency"), and the patient/guardian identified in this form ("the Client").
+          </p>
+
+          <h4>1. Services</h4>
+          <p>
+            The Agency agrees to provide qualified healthcare staff (Nurse, Babysitter, Midwife,
+            Attendant, or Care Taker) to the Client at the agreed location. Staff are assigned based
+            on availability and case requirements. The Agency reserves the right to replace staff
+            with equally qualified personnel if needed.
+          </p>
+
+          <h4>2. Fees &amp; Payment</h4>
+          <p>
+            The Client agrees to pay the agreed billing rate for services rendered. Payment is due
+            on a daily/weekly/monthly basis as agreed with the Agency. Late payments may incur
+            additional charges. Rental equipment fees are billed separately per the rental schedule.
+          </p>
+
+          <h4>3. Client Responsibilities</h4>
+          <p>
+            The Client shall provide a safe working environment for Agency staff. The Client agrees
+            to inform the Agency of any changes in the patient's condition or care requirements. The
+            Client shall not directly employ or poach Agency staff during or within 6 months of
+            service termination.
+          </p>
+
+          <h4>4. Limitation of Liability</h4>
+          <p>
+            The Agency takes reasonable care in staff selection and training. However, the Agency
+            shall not be liable for indirect, incidental, or consequential damages arising from
+            services provided. The Client acknowledges that medical outcomes depend on multiple
+            factors beyond the Agency's control.
+          </p>
+
+          <h4>5. Equipment Rental</h4>
+          <p>
+            Rented equipment remains the property of HMSP. The Client is responsible for the
+            equipment's safe use and return in good condition. Damaged or lost equipment will be
+            charged at full replacement value.
+          </p>
+
+          <h4>6. Termination</h4>
+          <p>
+            Either party may terminate this agreement with 24 hours' notice. The Agency may
+            terminate immediately if staff safety is compromised or if terms are violated.
+          </p>
+
+          <p style="margin-top: 16px; font-size: 12px; color: #64748b">
+            By signing below, you acknowledge that you have read, understood, and agree to all terms
+            and conditions stated in this agreement.
+          </p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Billing Rate (PKR/day) *</label>
+            <input type="number" id="billingRate" placeholder="e.g. 2500" required />
+          </div>
+          <div class="field">
+            <label>Service Start Date *</label>
+            <input type="date" id="startDate" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Signatory Full Name *</label>
+            <input
+              type="text"
+              id="signatoryName"
+              placeholder="Your full name as digital signature"
+              required
+            />
+          </div>
+          <div class="field">
+            <label>Signatory CNIC *</label>
+            <input type="text" id="signatoryCnic" placeholder="CNIC of person signing" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Equipment Rental -->
+      <div class="card">
+        <div class="card-title">
+          <span class="num">3</span> Equipment Rental
+          <span
+            style="
+              font-weight: 400;
+              color: #64748b;
+              text-transform: none;
+              letter-spacing: 0;
+              font-size: 11px;
+            "
+            >(optional)</span
+          >
+        </div>
+        <div id="equipmentList"></div>
+        <button class="add-equip" onclick="addEquipmentRow()">+ Add Equipment</button>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Submit Intake Form</button>
+
+      <div class="footer">HMSP Dashboard v2.0 &middot; Karachi</div>
+    </div>
+
+    <!-- Success -->
+    <div class="container" id="successContainer">
+      <div class="success" id="successBox">
+        <div class="icon">
+          <svg
+            width="28"
+            height="28"
+            fill="none"
+            stroke="#34d399"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </div>
+        <h2>Form Submitted Successfully</h2>
+        <p>
+          Thank you. Your intake form has been received by HMSP. Our team will contact you shortly
+          to confirm your service request.
+        </p>
+        <p style="margin-top: 20px; font-size: 14px; color: #34d399">
+          Reference ID: <span id="refId" style="font-family: monospace; font-weight: 700"></span>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // ── Auto-format helpers ──
+      function formatNameInput(val) {
+        return val.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      }
+      function formatCNICInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 13)
+        if (digits.length <= 5) return digits
+        if (digits.length <= 12) return digits.slice(0, 5) + '-' + digits.slice(5)
+        return digits.slice(0, 5) + '-' + digits.slice(5, 12) + '-' + digits.slice(12)
+      }
+      function formatPhoneInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 11)
+        if (digits.length <= 4) return digits
+        return digits.slice(0, 4) + '-' + digits.slice(4)
+      }
+      function computeAge(dobStr) {
+        if (!dobStr) return ''
+        const birth = new Date(dobStr)
+        const today = new Date()
+        let age = today.getFullYear() - birth.getFullYear()
+        const m = today.getMonth() - birth.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+        return age
+      }
+
+      // ── Wire auto-format on input ──
+      document.addEventListener('DOMContentLoaded', () => {
+        const nameFields = ['fullName', 'guardianName', 'signatoryName']
+        nameFields.forEach((id) => {
+          const el = document.getElementById(id)
+          if (el)
+            el.addEventListener('input', function () {
+              const start = this.selectionStart
+              this.value = formatNameInput(this.value)
+              this.setSelectionRange(start, start)
+            })
+        })
+        document.getElementById('cnic').addEventListener('input', function () {
+          this.value = formatCNICInput(this.value)
+        })
+        document.getElementById('signatoryCnic').addEventListener('input', function () {
+          this.value = formatCNICInput(this.value)
+        })
+        document.getElementById('mobile').addEventListener('input', function () {
+          this.value = formatPhoneInput(this.value)
+        })
+        document.getElementById('dob').addEventListener('change', function () {
+          const age = computeAge(this.value)
+          document.getElementById('ageDisplay').value = age ? age + ' years' : ''
+        })
+      })
+
+      const SUPABASE_URL = 'https://euxzitqllnltlteckeyq.supabase.co'
+      const ANON_KEY =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHppdHFsbG5sdGx0ZWNrZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzg0NjYsImV4cCI6MjA5MDgxNDQ2Nn0.E1sNIjBEDggmlv1cAOU8y5aIMU6zVW00rTYBlnsiVI4'
+
+      const EQUIPMENT_ITEMS = [
+        'Ventilator',
+        'Cardiac Monitor',
+        'Oxygen Concentrator',
+        'Suction Machine',
+        'Nebulizer',
+        'Hospital Bed',
+        'Wheelchair',
+        'Walker',
+        'Patient Lift',
+        'Bedside Commode',
+      ]
+
+      let equipCount = 0
+
+      function equipmentOptions(selected) {
+        return EQUIPMENT_ITEMS.map(
+          (i) => `<option value="${i}"${i === selected ? ' selected' : ''}>${i}</option>`
+        ).join('')
+      }
+
+      function addEquipmentRow(item, qty, start, end, fee) {
+        const container = document.getElementById('equipmentList')
+        const idx = equipCount++
+        const div = document.createElement('div')
+        div.className = 'equip-row'
+        div.id = 'equip-' + idx
+        div.innerHTML = `
+        <div class="row">
+          <div class="field">
+            <label>Equipment</label>
+            <select id="equipName-${idx}">
+              <option value="">Select...</option>
+              ${equipmentOptions(item || '')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Quantity</label>
+            <input type="number" id="equipQty-${idx}" min="1" value="${qty || 1}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Rent Start</label>
+            <input type="date" id="equipStart-${idx}" value="${start || ''}" />
+          </div>
+          <div class="field">
+            <label>Rent End</label>
+            <input type="date" id="equipEnd-${idx}" value="${end || ''}" />
+          </div>
+        </div>
+        <div class="row" style="align-items:end;">
+          <div class="field">
+            <label>Daily Fee (PKR)</label>
+            <input type="number" id="equipFee-${idx}" min="0" placeholder="e.g. 500" value="${fee || ''}" />
+          </div>
+          <div class="field">
+            <button class="remove-equip" onclick="removeEquipmentRow(${idx})">Remove</button>
+          </div>
+        </div>
+      `
+        container.appendChild(div)
+      }
+
+      function removeEquipmentRow(idx) {
+        const el = document.getElementById('equip-' + idx)
+        if (el) el.remove()
+      }
+
+      function showError(msg) {
+        const box = document.getElementById('errorBox')
+        box.textContent = msg
+        box.classList.add('show')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+
+      function hideError() {
+        document.getElementById('errorBox').classList.remove('show')
+      }
+
+      function collectEquipment() {
+        const items = []
+        const rows = document.querySelectorAll('.equip-row')
+        rows.forEach((row) => {
+          const idx = row.id.replace('equip-', '')
+          const name = document.getElementById('equipName-' + idx)?.value
+          if (!name) return
+          items.push({
+            name,
+            quantity: parseInt(document.getElementById('equipQty-' + idx)?.value || '1'),
+            start_date: document.getElementById('equipStart-' + idx)?.value || null,
+            end_date: document.getElementById('equipEnd-' + idx)?.value || null,
+            daily_fee: parseFloat(document.getElementById('equipFee-' + idx)?.value || '0') || 0,
+          })
+        })
+        return items
+      }
+
+      async function handleSubmit() {
+        hideError()
+
+        // Validate required fields
+        const fields = {
+          fullName: 'Full Name',
+          guardianName: 'Father/Husband Name',
+          gender: 'Gender',
+          cnic: 'CNIC Number',
+          mobile: 'Mobile Number',
+          serviceType: 'Service Type',
+          billingRate: 'Billing Rate',
+          startDate: 'Start Date',
+          signatoryName: 'Signatory Name',
+          signatoryCnic: 'Signatory CNIC',
+        }
+
+        const values = {}
+        for (const [id, label] of Object.entries(fields)) {
+          const el = document.getElementById(id)
+          values[id] = el.value.trim()
+          if (!values[id]) {
+            showError('Please fill in: ' + label)
+            el.focus()
+            return
+          }
+        }
+
+        if (!values.cnic.match(/^\d{5}-\d{7}-\d$/)) {
+          showError('CNIC must be in format: XXXXX-XXXXXXX-X')
+          document.getElementById('cnic').focus()
+          return
+        }
+
+        const btn = document.getElementById('submitBtn')
+        btn.disabled = true
+        btn.innerHTML = '<span class="spinner"></span> Submitting...'
+
+        try {
+          const equipment = collectEquipment()
+          const payload = {
+            full_name: values.fullName,
+            guardian_name: values.guardianName,
+            gender: values.gender,
+            marital_status: document.getElementById('maritalStatus').value || null,
+            cnic: values.cnic,
+            date_of_birth: document.getElementById('dob').value || null,
+            mobile: values.mobile,
+            district: document.getElementById('district').value.trim() || null,
+            address: document.getElementById('address').value.trim() || null,
+            service_type: values.serviceType,
+            billing_rate: parseFloat(values.billingRate) || 0,
+            start_date: values.startDate,
+            signatory_name: values.signatoryName,
+            signatory_cnic: values.signatoryCnic,
+            terms_accepted: true,
+            equipment: equipment.length > 0 ? equipment : '[]',
+          }
+
+          const resp = await fetch(SUPABASE_URL + '/rest/v1/patient_intakes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: ANON_KEY,
+              Authorization: 'Bearer ' + ANON_KEY,
+            },
+            body: JSON.stringify(payload),
+          })
+
+          if (!resp.ok) {
+            const errBody = await resp.text()
+            throw new Error('Server error: ' + resp.status)
+          }
+
+          // anon role cannot use return=representation, so response body is empty
+          // Extract the created ID from the Location header if available
+          const location = resp.headers.get('Location') || ''
+          const refId = location.includes('id=eq.')
+            ? location.split('id=eq.')[1] || 'submitted'
+            : 'submitted'
+
+          // Show success
+          document.getElementById('formContainer').style.display = 'none'
+          document.getElementById('successBox').classList.add('show')
+          document.getElementById('refId').textContent =
+            refId.length > 8 ? refId.slice(0, 8) + '...' : refId
+        } catch (err) {
+          btn.disabled = false
+          btn.textContent = 'Submit Intake Form'
+          showError('Submission failed: ' + (err.message || 'Unknown error. Please try again.'))
+        }
+      }
+
+      // Set default start date to today
+      document.getElementById('startDate').value = new Date().toISOString().split('T')[0]
+    </script>
+  </body>
+</html>

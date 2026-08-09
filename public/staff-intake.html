@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HMSP Staff Registration</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        background: #000;
+        color: #e2e8f0;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+      .bg-glow {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          800px circle at 50% -20%,
+          rgba(16, 185, 129, 0.06),
+          transparent 60%
+        );
+      }
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 24px 16px;
+        position: relative;
+      }
+
+      /* Brand */
+      .brand {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+      .brand h1 {
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: #fff;
+      }
+      .brand h1 span {
+        color: #10b981;
+      }
+      .brand p {
+        font-size: 10px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-top: 6px;
+        font-weight: 700;
+      }
+
+      /* Cards */
+      .card {
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .card-title {
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #10b981;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title .num {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 900;
+        color: #10b981;
+      }
+
+      /* Form */
+      .field {
+        margin-bottom: 16px;
+      }
+      .field:last-child {
+        margin-bottom: 0;
+      }
+      label {
+        display: block;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 12px 14px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: inherit;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(16, 185, 129, 0.4);
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(148, 163, 184, 0.3);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+        cursor: pointer;
+      }
+
+      /* Row */
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      /* Submit */
+      .submit-btn {
+        width: 100%;
+        background: #10b981;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        color: #000;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 4px;
+      }
+      .submit-btn:hover {
+        background: #059669;
+      }
+      .submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* Success */
+      .success {
+        display: none;
+        text-align: center;
+        padding: 60px 24px;
+      }
+      .success.show {
+        display: block;
+      }
+      .success .icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+      .success h2 {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .success p {
+        font-size: 13px;
+        color: #94a3b8;
+        max-width: 360px;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* Error */
+      .error-box {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        border-radius: 10px;
+        padding: 12px 14px;
+        color: #fca5a5;
+        font-size: 12px;
+        margin-bottom: 16px;
+        display: none;
+      }
+      .error-box.show {
+        display: block;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-top-color: #000;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        font-size: 9px;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 700;
+        margin-top: 32px;
+        padding-bottom: 40px;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px 12px;
+        }
+        .card {
+          padding: 18px;
+          border-radius: 12px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+        }
+        .brand h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-glow"></div>
+
+    <div class="container" id="formContainer">
+      <div class="brand">
+        <h1>HMSP <span>STAFF</span></h1>
+        <p>Professional Registration Portal</p>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <!-- Section 1: Personal Info -->
+      <div class="card">
+        <div class="card-title"><span class="num">1</span> Personal Information</div>
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="fullName" placeholder="e.g. Fatima BiBi" required />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Father / Husband Name *</label>
+            <input type="text" id="guardianName" placeholder="Father or husband name" required />
+          </div>
+          <div class="field">
+            <label>Gender *</label>
+            <select id="gender" required>
+              <option value="">Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Marital Status</label>
+            <select id="maritalStatus">
+              <option value="">Select...</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input type="text" id="ageDisplay" placeholder="Auto-calculated" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>CNIC Number *</label>
+            <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required />
+          </div>
+          <div class="field">
+            <label>Date of Birth</label>
+            <input type="date" id="dob" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Mobile / WhatsApp *</label>
+            <input type="tel" id="mobile" placeholder="+92 XXX XXXXXXX" required />
+          </div>
+          <div class="field">
+            <label>District</label>
+            <select id="district">
+              <option value="">Select District...</option>
+              <option value="Nazimabad (Central)">Nazimabad (Central)</option>
+              <option value="Gulshan (East)">Gulshan (East)</option>
+              <option value="Karachi South">Karachi South</option>
+              <option value="Orangi (West)">Orangi (West)</option>
+              <option value="Keamari">Keamari</option>
+              <option value="Korangi">Korangi</option>
+              <option value="Malir">Malir</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Complete Address</label>
+          <textarea id="address" rows="2" placeholder="House / Street / Sector / City"></textarea>
+        </div>
+      </div>
+
+      <!-- Section 2: Professional Details -->
+      <div class="card">
+        <div class="card-title"><span class="num">2</span> Professional Profile</div>
+        <div class="row">
+          <div class="field">
+            <label>Position Applied *</label>
+            <select id="position" required>
+              <option value="">Select...</option>
+              <option value="R/N">R/N (Registered Nurse)</option>
+              <option value="BSN">BSN (Bachelor of Science in Nursing)</option>
+              <option value="Aid Nurse">Aid Nurse</option>
+              <option value="Midwife">Midwife</option>
+              <option value="DPT">DPT (Physiotherapy)</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Attendant">Attendant</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Years of Experience *</label>
+            <input type="number" id="experience" placeholder="e.g. 5" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Shift Preference *</label>
+            <select id="shift" required>
+              <option value="">Select...</option>
+              <option value="Day">Day (12 Hours)</option>
+              <option value="Night">Night (12 Hours)</option>
+              <option value="24 hrs">24 Hours</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Expected Salary (PKR/month) *</label>
+            <input type="number" id="salary" placeholder="e.g. 60000" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Bank Details -->
+      <div class="card">
+        <div class="card-title"><span class="num">3</span> Payment & Bank Details</div>
+        <div class="field">
+          <label>Bank Name</label>
+          <input type="text" id="bankName" placeholder="e.g. HBL / Meezan / JazzCash" />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Account Number</label>
+            <input type="text" id="accountNo" placeholder="Account or Wallet Number" />
+          </div>
+          <div class="field">
+            <label>Account Title</label>
+            <input type="text" id="accountTitle" placeholder="Name on Account" />
+          </div>
+        </div>
+        <div class="field">
+          <label>IBAN Number</label>
+          <input type="text" id="iban" placeholder="PKXX XXXX XXXX XXXX XXXX XXXX" />
+        </div>
+      </div>
+
+      <!-- Section 4: Acknowledgment -->
+      <div class="card">
+        <div class="card-title"><span class="num">4</span> Employee Acknowledgment</div>
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 16px;
+          "
+        >
+          <p>
+            I hereby acknowledge that I am applying for a position at HMSP. I agree to follow all
+            agency protocols. I understand that duty abandonment without 24-hour prior notice will
+            result in immediate termination and penalty as per agency policy.
+          </p>
+        </div>
+        <div class="field" style="display: flex; gap: 10px; align-items: center">
+          <input type="checkbox" id="terms" style="width: auto" required />
+          <label for="terms" style="margin-bottom: 0"
+            >I agree to the terms and conditions stated above.</label
+          >
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+        Complete Registration
+      </button>
+
+      <div class="footer">HMSP Dashboard v2.0 &middot; Staff Portal</div>
+    </div>
+
+    <!-- Success -->
+    <div class="container" id="successContainer" style="display: none">
+      <div class="success show">
+        <div class="icon">
+          <svg
+            width="28"
+            height="28"
+            fill="none"
+            stroke="#10b981"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </div>
+        <h2>Registration Successful</h2>
+        <p>
+          Thank you for completing your profile. Our recruitment team will review your application
+          and contact you for verification shortly.
+        </p>
+        <p style="margin-top: 20px; font-size: 14px; color: #10b981">
+          Reference ID: <span id="refId" style="font-family: monospace; font-weight: 700"></span>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // ── Auto-format helpers ──
+      function formatNameInput(val) {
+        return val.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      }
+      function formatCNICInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 13)
+        if (digits.length <= 5) return digits
+        if (digits.length <= 12) return digits.slice(0, 5) + '-' + digits.slice(5)
+        return digits.slice(0, 5) + '-' + digits.slice(5, 12) + '-' + digits.slice(12)
+      }
+      function formatPhoneInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 11)
+        if (digits.length <= 4) return digits
+        return digits.slice(0, 4) + '-' + digits.slice(4)
+      }
+      function computeAge(dobStr) {
+        if (!dobStr) return ''
+        const birth = new Date(dobStr)
+        const today = new Date()
+        let age = today.getFullYear() - birth.getFullYear()
+        const m = today.getMonth() - birth.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+        return age
+      }
+
+      // ── Wire auto-format on input ──
+      document.addEventListener('DOMContentLoaded', () => {
+        const nameFields = ['fullName', 'guardianName']
+        nameFields.forEach((id) => {
+          const el = document.getElementById(id)
+          if (el)
+            el.addEventListener('input', function () {
+              const start = this.selectionStart
+              this.value = formatNameInput(this.value)
+              this.setSelectionRange(start, start)
+            })
+        })
+        document.getElementById('cnic').addEventListener('input', function () {
+          this.value = formatCNICInput(this.value)
+        })
+        document.getElementById('mobile').addEventListener('input', function () {
+          this.value = formatPhoneInput(this.value)
+        })
+        document.getElementById('dob').addEventListener('change', function () {
+          const age = computeAge(this.value)
+          document.getElementById('ageDisplay').value = age ? age + ' years' : ''
+        })
+      })
+
+      const SUPABASE_URL = 'https://euxzitqllnltlteckeyq.supabase.co'
+      const ANON_KEY =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHppdHFsbG5sdGx0ZWNrZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzg0NjYsImV4cCI6MjA5MDgxNDQ2Nn0.E1sNIjBEDggmlv1cAOU8y5aIMU6zVW00rTYBlnsiVI4'
+
+      // Pre-fill from URL
+      window.onload = () => {
+        const params = new URLSearchParams(window.location.search)
+        if (params.get('name')) document.getElementById('fullName').value = params.get('name')
+        if (params.get('phone')) document.getElementById('mobile').value = params.get('phone')
+      }
+
+      function showError(msg) {
+        const box = document.getElementById('errorBox')
+        box.textContent = msg
+        box.classList.add('show')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+
+      function hideError() {
+        document.getElementById('errorBox').classList.remove('show')
+      }
+
+      async function handleSubmit() {
+        hideError()
+
+        const requiredFields = {
+          fullName: 'Full Name',
+          guardianName: 'Father/Husband Name',
+          gender: 'Gender',
+          cnic: 'CNIC Number',
+          mobile: 'Mobile Number',
+          position: 'Position',
+          experience: 'Experience',
+          shift: 'Shift Preference',
+          salary: 'Expected Salary',
+        }
+
+        const values = {}
+        for (const [id, label] of Object.entries(requiredFields)) {
+          const el = document.getElementById(id)
+          values[id] = el.value.trim()
+          if (!values[id]) {
+            showError('Please fill in: ' + label)
+            el.focus()
+            return
+          }
+        }
+
+        if (!document.getElementById('terms').checked) {
+          showError('Please agree to the terms and conditions.')
+          return
+        }
+
+        const btn = document.getElementById('submitBtn')
+        btn.disabled = true
+        btn.innerHTML = '<span class="spinner"></span> Submitting...'
+
+        try {
+          const payload = {
+            full_name: values.fullName,
+            father_husband_name: values.guardianName,
+            gender: values.gender,
+            marital_status: document.getElementById('maritalStatus').value || null,
+            cnic_number: values.cnic,
+            date_of_birth: document.getElementById('dob').value || null,
+            phone_primary: values.mobile,
+            district: document.getElementById('district').value || null,
+            complete_address: document.getElementById('address').value.trim() || null,
+            position_applied: values.position,
+            experience_years: parseFloat(values.experience) || 0,
+            shift_preference: values.shift,
+            expected_salary_pkr: parseFloat(values.salary) || 0,
+            bank_name: document.getElementById('bankName').value.trim() || null,
+            account_no: document.getElementById('accountNo').value.trim() || null,
+            account_title: document.getElementById('accountTitle').value.trim() || null,
+            iban: document.getElementById('iban').value.trim() || null,
+            terms_accepted: true,
+            status: 'pending',
+          }
+
+          const resp = await fetch(SUPABASE_URL + '/rest/v1/staff_intakes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: ANON_KEY,
+              Authorization: 'Bearer ' + ANON_KEY,
+            },
+            body: JSON.stringify(payload),
+          })
+
+          if (!resp.ok) {
+            await resp.text() // consume response body for connection pooling
+            throw new Error('Server error: ' + resp.status)
+          }
+
+          document.getElementById('formContainer').style.display = 'none'
+          document.getElementById('successContainer').style.display = 'block'
+          document.getElementById('refId').textContent =
+            'NC-STAFF-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+        } catch (err) {
+          btn.disabled = false
+          btn.textContent = 'Complete Registration'
+          showError('Submission failed: ' + (err.message || 'Unknown error.'))
+        }
+      }
+    </script>
+  </body>
+</html>

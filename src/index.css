@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bg: #F5F3EE;
+  --color-card: #FFFFFF;
+  --color-border: #E5E2DC;
+  --color-border-hover: #D6D2CA;
+  --color-ink: #292524;
+  --color-ink-dim: #78716C;
+  --color-brand: #059669;
+  --color-brand-dim: #047857;
+  --color-accent: #3B82F6;
+  --color-emerald-glow: #34D399;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-bg)] text-[var(--color-ink)] font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200;
+  }
+
+  .dark body,
+  body.dark,
+  :where(.dark) {
+    --color-bg: #1A1A1A;
+    --color-card: #262626;
+    --color-border: #404040;
+    --color-border-hover: #525252;
+    --color-ink: #F5F5F4;
+    --color-ink-dim: #A8A29E;
+    --color-brand: #34D399;
+    --color-brand-dim: #6EE7B7;
+    --color-emerald-glow: #6EE7B7;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-black/10 dark:bg-white/10 rounded-full hover:bg-black/20 dark:hover:bg-white/20 transition-colors;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white dark:bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-sm;
+  }
+
+  .input-field {
+    @apply bg-white dark:bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg px-4 py-2 text-[var(--color-ink)] placeholder:text-[var(--color-ink-dim)] focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
+  }
+
+  .btn-primary {
+    @apply bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.1em] text-xs;
+  }
+
+  .btn-secondary {
+    @apply bg-[var(--color-card)] hover:bg-[var(--color-border)] text-[var(--color-ink-dim)] font-medium px-4 py-2 rounded-lg border border-[var(--color-border)] transition-all text-sm;
+  }
+
+  .text-mono-emerald {
+    @apply font-mono text-emerald-600 dark:text-emerald-400 font-semibold;
+  }
+}
+
+.animate-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Modified Thu Apr 30 02:56:54 PM PKT 2026 */
+/* Cache buster Thu Apr 30 03:40:57 PM PKT 2026 */
