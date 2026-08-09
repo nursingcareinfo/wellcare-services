@@ -14,4 +14,5 @@ CREATE TABLE IF NOT EXISTS patient_equipment (
 );
 
 ALTER TABLE patient_equipment ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all on patient_equipment" ON patient_equipment;
 CREATE POLICY "Allow all on patient_equipment" ON patient_equipment FOR ALL USING (true) WITH CHECK (true);

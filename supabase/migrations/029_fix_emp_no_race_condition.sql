@@ -18,7 +18,10 @@ CREATE SEQUENCE IF NOT EXISTS employees_emp_no_seq;
 --    their numbers and the next new staff gets the next available number.
 SELECT setval(
     'employees_emp_no_seq',
-    COALESCE(MAX(CAST(SUBSTRING(emp_no FROM '\d+$') AS int)), 0),
+    GREATEST(
+      COALESCE(MAX(CAST(SUBSTRING(emp_no FROM '\d+$') AS int)), 0),
+      1
+    ),
     false
   )
 FROM employees;
