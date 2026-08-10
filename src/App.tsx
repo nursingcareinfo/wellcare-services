@@ -71,7 +71,7 @@ function AppContent() {
   const menuItems = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
     { id: 'staff', label: 'Staff Tool', icon: Users },
-    { id: 'ocr', label: 'Registrar', icon: UserPlus },
+    { id: 'ocr', label: 'Registration', icon: UserPlus },
     { id: 'patients', label: 'Patients', icon: ClipboardList },
     { id: 'attendance', label: 'Attendance', icon: ClipboardList },
     { id: 'patient_intakes', label: 'Patient Intakes', icon: MessageSquare },

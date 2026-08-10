@@ -283,7 +283,7 @@ export default function OCRView() {
                     : 'bg-gray-50 dark:bg-neutral-800/80 text-gray-400 dark:text-neutral-500 hover:text-gray-800 dark:text-neutral-100 border border-gray-200 dark:border-neutral-700'
                 )}
               >
-                AI Batch Upload
+                Upload CV and PNC
               </button>
             </div>
 
@@ -403,7 +403,7 @@ export default function OCRView() {
               <>
                 <h2 className="text-xs font-bold text-gray-400 dark:text-neutral-500 uppercase tracking-widest mb-8 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Registration Gatekeeper (Multimodal AI Batch)
+                  Registration Gatekeeper (Upload CV & PNC)
                 </h2>
 
                 <div
