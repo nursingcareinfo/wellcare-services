@@ -17,7 +17,7 @@ import {
   Clock,
   ShieldAlert,
 } from 'lucide-react'
-import { staffService, type Staff } from '../services/staffService'
+import { staffService, normalizePhone, type Staff } from '../services/staffService'
 import { shiftService } from '../services/shiftService'
 import { advanceService, type SalaryAdvance } from '../services/advanceService'
 import { patientService } from '../services/patientService'
@@ -431,8 +431,9 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
   const handleEditStaff = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedStaffForEdit) return
-    const phoneDigits = editFormData.phone_primary.replace(/\D/g, '')
-    if (phoneDigits && !/^0?3\d{9}$/.test(phoneDigits)) {
+    // Accepts both the 03XX-XXXXXXX input format and the stored +92 3XX XXXXXXX
+    // canonical format (OCR-committed records) — normalizePhone handles both.
+    if (editFormData.phone_primary && !normalizePhone(editFormData.phone_primary)) {
       alert('Phone must be a valid Pakistani mobile (03XX-XXXXXXX).')
       return
     }
