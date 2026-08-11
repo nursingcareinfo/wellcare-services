@@ -7,9 +7,12 @@ import { supabase } from '../lib/supabase'
  * API key lives in function secrets, never in the client bundle. The typed
  * extraction schema + prompt live in supabase/functions/extract-staff/index.ts.
  */
-export async function extractStaffData(imageBase64s: string[]): Promise<any> {
+export async function extractStaffData(
+  imageBase64s: string[],
+  mimeTypes?: string[]
+): Promise<any> {
   const { data, error } = await supabase.functions.invoke('extract-staff', {
-    body: { images: imageBase64s },
+    body: { images: imageBase64s, mimeTypes },
   })
 
   if (error) {

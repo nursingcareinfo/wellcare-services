@@ -22,7 +22,7 @@ import { shiftService } from '../services/shiftService'
 import { advanceService, type SalaryAdvance } from '../services/advanceService'
 import { patientService } from '../services/patientService'
 import { fillRandomStaff } from '../lib/randomData'
-import { formatPKR, formatCNICInput, formatPhoneInput, formatNameInput } from '../lib/utils'
+import { formatPKR, formatCNICInput, formatPhoneInput, formatNameInput, formatPNCInput } from '../lib/utils'
 import { KARACHI_AREAS, STAFF_CATEGORIES } from '../constants'
 import StaffAttendanceCalendarModal from './StaffAttendanceCalendarModal'
 import StaffLedgerModal from './StaffLedgerModal'
@@ -68,6 +68,8 @@ interface RegisterForm {
   full_name: string
   father_husband_name: string
   cnic_number: string
+  pnc_registration_number: string
+  pnc_license_expiry_date: string
   phone_primary: string
   whatsapp_number: string
   gender: string
@@ -90,6 +92,8 @@ const EMPTY_FORM: RegisterForm = {
   full_name: '',
   father_husband_name: '',
   cnic_number: '',
+  pnc_registration_number: '',
+  pnc_license_expiry_date: '',
   phone_primary: '',
   whatsapp_number: '',
   gender: '',
@@ -278,6 +282,8 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
         full_name: formData.full_name.trim(),
         father_husband_name: formData.father_husband_name.trim() || undefined,
         cnic_number: formData.cnic_number,
+        pnc_registration_number: formData.pnc_registration_number.trim() || undefined,
+        pnc_license_expiry_date: formData.pnc_license_expiry_date || undefined,
         phone_primary: formData.phone_primary,
         whatsapp_number: formData.whatsapp_number.trim() || undefined,
         gender: formData.gender || undefined,
@@ -401,6 +407,8 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
       full_name: staff.full_name || '',
       father_husband_name: staff.father_husband_name || '',
       cnic_number: staff.cnic_number || '',
+      pnc_registration_number: staff.pnc_registration_number || '',
+      pnc_license_expiry_date: staff.pnc_license_expiry_date || '',
       phone_primary: staff.phone_primary || '',
       whatsapp_number: staff.whatsapp_number || '',
       gender: staff.gender || '',
@@ -440,6 +448,8 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
         full_name: editFormData.full_name.trim() || undefined,
         father_husband_name: editFormData.father_husband_name.trim() || undefined,
         cnic_number: editFormData.cnic_number || undefined,
+        pnc_registration_number: editFormData.pnc_registration_number.trim() || undefined,
+        pnc_license_expiry_date: editFormData.pnc_license_expiry_date || undefined,
         phone_primary: editFormData.phone_primary || undefined,
         whatsapp_number: editFormData.whatsapp_number.trim() || undefined,
         gender: editFormData.gender || undefined,
@@ -604,6 +614,28 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
           placeholder="42101-1234567-1"
           inputMode="numeric"
           required
+        />
+      </div>
+      <div>
+        <label className="block text-[10px] uppercase tracking-widest font-black text-[var(--color-ink-dim)] mb-1">
+          PNC Registration No.
+        </label>
+        <input
+          className={inputClass}
+          value={data.pnc_registration_number}
+          onChange={(e) => set('pnc_registration_number', formatPNCInput(e.target.value))}
+          placeholder="e.g. PK-K-22-A-290169"
+        />
+      </div>
+      <div>
+        <label className="block text-[10px] uppercase tracking-widest font-black text-[var(--color-ink-dim)] mb-1">
+          PNC License Expiry
+        </label>
+        <input
+          type="date"
+          className={inputClass}
+          value={data.pnc_license_expiry_date}
+          onChange={(e) => set('pnc_license_expiry_date', e.target.value)}
         />
       </div>
       <div>

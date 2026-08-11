@@ -11,6 +11,7 @@
 
 import { GoogleGenAI, Type } from 'npm:@google/genai@2.2.0'
 import { corsHeaders } from '../_shared/cors.ts'
+import { detectMimeType } from './mime.ts'
 
 const MODEL = 'gemini-flash-latest'
 
@@ -184,6 +185,19 @@ const PROMPT = `
   3. mobileNumber (format: +92 XXX XXXXXXX)
   4. pncRegistrationNumber (PNC/PN&MC license number visible on the card front and back)
 
+  DIGIT PRECISION — READ EXACTLY, NEVER GUESS:
+  - Transcribe numbers character-for-character from the document. Do not "correct" or "complete" them.
+  - Watch look-alike characters: 0 vs O, 1 vs I/l, 7 vs 1, 8 vs B, 5 vs S, 2 vs Z.
+  - Documents may print digits in Urdu/Arabic-Indic numerals (٠١٢٣٤٥٦٧٨٩ or ۰۱۲۳۴۵۶۷۸۹) — convert them to Western digits 0-9.
+  - Write numbers as uninterrupted runs (no spaces between digits).
+  - If any digit of a mandatory field is illegible, smudged, cut off, or ambiguous, return null for that field. NEVER guess a digit.
+
+  CANONICAL OUTPUT FORMATS (apply exactly):
+  - cnicNumber: XXXXX-XXXXXXX-X (13 digits, dashes after the 5th and 12th). E.g. 42301-0932963-3.
+  - mobileNumber / whatsappNumber: +92 3XX XXXXXXX (drop leading 0, +92 prefix, space after +92). E.g. +92 343 2649875.
+  - pncRegistrationNumber: keep the printed card format with uppercase letters, e.g. PK-K-22-A-290169, A-54887, PK-S-25-W-366996.
+  - All dates: YYYY-MM-DD.
+
   SPECIAL DOCUMENT — PNC LICENSE CARD:
   - When a PNC (Pakistan Nursing & Midwifery Council) license card is uploaded, it may appear as the front and/or back of a card.
   - Extract the license/registration number (usually formatted like PK-K-22-A-XXXXXX) from BOTH front and back.
@@ -225,7 +239,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { images } = await req.json()
+    const { images, mimeTypes } = await req.json()
     if (!Array.isArray(images) || images.length === 0) {
       return new Response(JSON.stringify({ error: 'No images provided' }), {
         status: 400,
@@ -239,8 +253,8 @@ Deno.serve(async (req) => {
       })
     }
 
-    const inlineData = images.map((b64: string) => ({
-      inlineData: { data: b64, mimeType: 'image/jpeg' },
+    const inlineData = images.map((b64: string, i: number) => ({
+      inlineData: { data: b64, mimeType: mimeTypes?.[i] ?? detectMimeType(b64) },
     }))
 
     const response = await ai.models.generateContent({

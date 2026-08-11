@@ -77,9 +77,10 @@ export default function OCRView() {
       })
 
       const base64s = await Promise.all(base64Promises)
+      const mimeTypes = files.map((f) => f.type || undefined)
       console.log('OCR: All files converted to base64, calling extractStaffData')
 
-      const data = await extractStaffData(base64s)
+      const data = await extractStaffData(base64s, mimeTypes)
       console.log('OCR: Extraction successful, data:', data)
       setExtractedData(data)
     } catch (err) {

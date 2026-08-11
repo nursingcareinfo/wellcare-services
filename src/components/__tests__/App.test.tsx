@@ -37,17 +37,17 @@ describe('App', () => {
     render(<App />)
 
     // App loads asynchronously (AuthProvider checks session),
-    // so we wait for the HMSP heading to appear
-    const heading = await screen.findByText(/HMSP/i, { selector: 'h1' })
+    // so we wait for the WellCare heading to appear
+    const heading = await screen.findByText(/WellCare/i, { selector: 'h1' })
     expect(heading).toBeInTheDocument()
-    expect(heading).toHaveTextContent(/High-Performance/i)
+    expect(heading).toHaveTextContent(/Home Nursing/i)
   })
 
   it('renders without crashing', async () => {
     const { container } = render(<App />)
 
     // Wait for loading to complete
-    await screen.findByText(/HMSP/i, { selector: 'h1' })
+    await screen.findByText(/WellCare/i, { selector: 'h1' })
     expect(container).toBeInTheDocument()
   })
 })

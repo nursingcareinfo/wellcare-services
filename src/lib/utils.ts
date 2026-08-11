@@ -45,3 +45,12 @@ export function formatPhoneInput(value: string): string {
   if (digits.length <= 4) return digits
   return `${digits.slice(0, 4)}-${digits.slice(4)}`
 }
+
+/**
+ * Auto-format PNC license number as user types:
+ * uppercases letters, strips spaces, keeps digits and dashes.
+ * (pk-s-25-w-366996 → PK-S-25-W-366996, A-54887 → A-54887)
+ */
+export function formatPNCInput(value: string): string {
+  return value.toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '')
+}
